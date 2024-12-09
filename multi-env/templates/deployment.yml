@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-{{ .Values.environment | default "default" }}
+  labels:
+    app: {{ .Chart.Name }}
+    environment: {{ .Values.environment | default "default" }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+      environment: {{ .Values.environment | default "default" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+        environment: {{ .Values.environment | default "default" }}
+    spec:
+      containers:
+        - name: nginx
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          resources:
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+          env:
+            - name: ENV_TYPE
+              value: :
+                {{- if eq .Values.environment "production" -}}
+                PROD
+                {{- else if eq .Values.environment "staging" -}}
+                STAGING
+                {{- else if eq .Values.environment "development" -}}
+                DEV
+                {{- else -}}
+                DEFAULT
+                {{- end }}

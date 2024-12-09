@@ -1,0 +1,12 @@
+dependencies:
+- name: mysql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.1.0
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 16.2.3
+- name: mongodb
+  repository: https://charts.bitnami.com/bitnami
+  version: 16.3.1
+digest: sha256:e31a201c5130cbcff3886603aedc7592df741348a7d82f8c7b5e720496d60959
+generated: "2024-12-03T09:49:30.197237371+02:00"

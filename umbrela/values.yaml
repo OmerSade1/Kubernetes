@@ -1,0 +1,14 @@
+db_name: &db_name umbrela
+
+mysql:
+  auth:
+    database: *db_name
+
+postgresql:
+  auth:
+    database: *db_name
+
+mongodb:
+  auth:
+    databases: [*db_name]
+    usernames: [*db_name]

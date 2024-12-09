@@ -1,0 +1,37 @@
+{{- if .Values.deployment.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mychart.fullname" . }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}   
+
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        {{- include "common.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 80   
+          {{- if .Values.volumeMount.enabled }}
+          volumeMounts:
+            - name: {{ .Values.volumeMount.name }}
+              mountPath: {{ .Values.volumeMount.mountPath }}
+          {{- end }}
+
+      volumes:
+        {{- if .Values.pvc.enabled }}
+        - name: {{ .Values.volumeMount.name }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.pvc.name }}
+        {{- end }}
+
+{{- end }}

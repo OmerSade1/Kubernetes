@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+spec:
+  schedule: "0 2 * * *" # Runs daily at 2:00 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: postgres-backup
+              image: postgres:latest
+              env:
+                - name: POSTGRES_PASSWORD
+                  value: "1234" # Matches StatefulSet
+                - name: POSTGRES_HOST
+                  value: "postgres" # Matches StatefulSet service name
+                - name: POSTGRES_DB
+                  value: "mydatabase" # Replace with your DB name
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  pg_dump -h $POSTGRES_HOST -U postgres $POSTGRES_DB > /backup/$(date +\%Y-\%m-\%d).sql
+              volumeMounts:
+                - name: backup-storage
+                  mountPath: /backup
+          volumes:
+            - name: backup-storage
+              persistentVolumeClaim:
+                claimName: postgres-backup-pvc
+          restartPolicy: OnFailure

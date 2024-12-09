@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: database-backup
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      containers:
+        - name: db-backup
+          image: {{ .Values.repo.image}}:{{ .Values.repo.tag}}
+          env:
+            - name: DB_HOST
+              value: "{{ .Values.database.host }}"
+            - name: DB_NAME
+              value: "{{ .Values.database.name }}"
+            - name: DB_USER
+              value: "{{ .Values.database.user }}"
+            - name: DB_PASSWORD
+              value: "{{ .Values.database.password }}"
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Starting backup...";
+              mysqldump -h $DB_HOST -u $DB_USER -p$DB_PASSWORD --no-tablespaces $DB_NAME > /backup/db-backup.sql;
+              echo "Backup completed.";
+          volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+      restartPolicy: OnFailure
+      volumes:
+        - name: backup-storage
+          persistentVolumeClaim:
+            claimName: backup-pvc

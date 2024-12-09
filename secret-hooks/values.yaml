@@ -1,0 +1,19 @@
+postgresql:
+  auth:
+    existingSecret: ""  
+
+backup:
+  enabled: true
+  image: bitnami/postgresql:latest
+
+postgresSecrets:
+  usernameKey: postgresql-user
+  passwordKey: postgresql-password
+  dbKey: postgresql-db
+
+
+
+
+
+
+

@@ -1,0 +1,15 @@
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    existingSecret: "redis-secret"
+    host: "redis-host"
+    port: "redis-port"
+    password: "redis-password"
+
+application:
+  image:
+    repository: ubuntu
+    tag: "20.04"
+
+

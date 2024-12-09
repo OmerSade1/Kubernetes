@@ -1,0 +1,10 @@
+database:
+  host: "database"
+  name: "my_database"
+  user: "admin"
+  password: "admin123"
+  rootPassword: "rootpassword"
+  
+repo:
+  image: mysql
+  tag: 5.7

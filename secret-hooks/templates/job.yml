@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgres-backup
+  annotations:
+    "helm.sh/hook": "pre-upgrade"  # This hook runs before upgrading the release
+    "helm.sh/hook-delete-policy": "never"  # Delete the job before creating a new one (optional, can be changed to 'hook-succeeded' if you want to keep the job after success)
+spec:
+  template:
+    spec:
+      containers:
+        - name: backup
+          image: {{ .Values.backup.image }}  # Image for backup, defined in values.yaml
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgresql  # Referring to the secret created by PostgreSQL chart
+                  key: {{ .Values.postgresSecrets.usernameKey }}  # postgresql-user key from the secret
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgresql
+                  key: {{ .Values.postgresSecrets.passwordKey }}  # postgresql-password key from the secret
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgresql
+                  key: {{ .Values.postgresSecrets.dbKey }}  # postgresql-db key from the secret
+          command:
+            - /bin/sh
+            - -c
+            - |
+              pg_dump -U $POSTGRES_USER -d $POSTGRES_DB -h postgres-postgresql > /backup/db_backup.sql
+          volumeMounts:
+            - name: backup-volume
+              mountPath: /backup
+      volumes:
+        - name: backup-volume
+          emptyDir: {}
+      restartPolicy: OnFailure
+  backoffLimit: 4  
+
+
+
+
