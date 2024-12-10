@@ -26,18 +26,18 @@ spec:
             - name: REDIS_HOST
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "redis.secretName" . }}
-                  key: {{ include "redis.host" . }}
+                  name: {{ .Values.redis.auth.existingSecret }}
+                  key: {{ .Values.redis.auth.host }}
             - name: REDIS_PORT
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "redis.secretName" . }}
-                  key: {{ include "redis.port" . }}
+                  name: {{ .Values.redis.auth.existingSecret }}
+                  key: {{ .Values.redis.auth.port }}
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "redis.secretName" . }}
-                  key: {{ include "redis.password" . }}
+                  name: {{ .Values.redis.auth.existingSecret }}
+                  key: {{ .Values.redis.auth.password }}
           volumeMounts:
             - name: script-volume
               mountPath: /scripts
