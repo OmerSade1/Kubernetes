@@ -20,9 +20,6 @@ spec:
         image: mysql:5.7
         ports:
         - containerPort: 3306
-        volumeMounts:
-          - mountPath: /var/lib/mysql
-            name: mysql-data
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: rootpassword
