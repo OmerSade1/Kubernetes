@@ -32,7 +32,4 @@ spec:
           value: wpuser
         - name: MYSQL_PASSWORD
           value: wppassword
-      volumes:
-        - name: mysql-data
-          persistentVolumeClaim:
-            claimName: mysql-data
+   
