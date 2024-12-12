@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: multi-env-applicationset
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: app-dev
+            environment: dev
+            valuesFile: values-dev.yml
+          - name: app-staging
+            environment: staging
+            valuesFile: values-stage.yml
+          - name: app-prod
+            environment: prod
+            valuesFile: values-prod.yml
+  template:
+    metadata:
+      name: '{{name}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/OmerSade1/Kubernetes
+        targetRevision: HEAD
+        path: multi-env
+        helm:
+          valueFiles:
+            - '{{valuesFile}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{environment}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+
